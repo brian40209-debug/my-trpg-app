@@ -234,7 +234,34 @@
             tempHero: { name: "", race: "", class: "", stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 }, equipment: [] },
             rolledPool: [] // 儲存 4D6 判定出的六組數值
         };
+// --- 核心 UI 控制與日誌輸出函式 (補回遺漏) ---
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
+        function changeTab(tab) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab'));
+            document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active-tab');
+            
+            if(tab === 'status') renderStatus();
+            if(tab === 'inventory') renderInventory();
+            if(tab === 'party') renderParty();
+        }
+
+        function addLog(sender, text) {
+            const log = document.getElementById('game-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${sender === 'GM' ? 'log-gm' : (sender === '系統' ? 'log-system' : 'log-player')}`;
+            
+            let prefix = sender === 'GM' ? '<i class="fa-solid fa-dragon text-amber-500 mr-2"></i>GM' : (sender === '系統' ? '<i class="fa-solid fa-gear mr-1"></i> 系統' : '玩家');
+            entry.innerHTML = `<strong>${prefix}:</strong> <div class="mt-1">${text}</div>`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
         // --- 靜態 D&D 5E 規則資料庫 ---
         const DND_DATA = {
             races: {
