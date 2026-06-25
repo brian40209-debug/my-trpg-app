@@ -229,40 +229,13 @@
         };
 
         const setupState = {
-            step: 1, // 1: 人數, 2: 世界觀, 3: 境地/宿命, 4: 選擇種族, 5: 選擇職業, 6: 判定分配屬性
+            step: 1,
             count: 1,
             tempHero: { name: "", race: "", class: "", stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 }, equipment: [] },
-            rolledPool: [] // 儲存 4D6 判定出的六組數值
+            rolledPool: [] 
         };
-// --- 核心 UI 控制與日誌輸出函式 (補回遺漏) ---
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
 
-        function changeTab(tab) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab'));
-            document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active-tab');
-            
-            if(tab === 'status') renderStatus();
-            if(tab === 'inventory') renderInventory();
-            if(tab === 'party') renderParty();
-        }
-
-        function addLog(sender, text) {
-            const log = document.getElementById('game-log');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${sender === 'GM' ? 'log-gm' : (sender === '系統' ? 'log-system' : 'log-player')}`;
-            
-            let prefix = sender === 'GM' ? '<i class="fa-solid fa-dragon text-amber-500 mr-2"></i>GM' : (sender === '系統' ? '<i class="fa-solid fa-gear mr-1"></i> 系統' : '玩家');
-            entry.innerHTML = `<strong>${prefix}:</strong> <div class="mt-1">${text}</div>`;
-            
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-        // --- 靜態 D&D 5E 規則資料庫 ---
+        // --- 靜態 D&D 5E 規則資料庫 (已全面修正"感知") ---
         const DND_DATA = {
             races: {
                 "矮人": {
@@ -304,7 +277,7 @@
             },
             classes: {
                 "牧師": {
-                    desc: "神聖魔法的導引者，集治癒振奮魔法與天罰神力於一身。憑藉 ایمان 與信仰對神意進行感應。",
+                    desc: "神聖魔法的導引者，集治癒振奮魔法與天罰神力於一身。憑藉信仰對神意進行感應。",
                     suggest: "最高分配給感知 (WIS)，次高分配給力量 (STR) 或體質 (CON)。",
                     hpDice: "1D8",
                     save: "感知、魅力",
@@ -347,7 +320,6 @@
             body.innerHTML = '';
             footer.innerHTML = '';
 
-            // 建立通用的返回按鈕邏輯
             let backBtn = document.createElement('button');
             backBtn.className = "btn-fantasy px-6 py-2 rounded text-gray-400 font-bold";
             backBtn.innerText = "返回";
@@ -480,7 +452,6 @@
                         </div>
                     </div>
                 `;
-                
                 nextContainer.innerHTML = `<button onclick="savePhase4Class()" class="btn-fantasy px-10 py-2 rounded font-bold text-amber-500">領受天命</button>`;
                 footer.appendChild(nextContainer);
             }
@@ -493,7 +464,7 @@
 
                 body.innerHTML = `
                     <div class="space-y-6 text-white">
-                        <p class="text-gray-400 text-sm">依 D&D 5E 規範，系統將進行 4次 D6 骰點判定，並自動扣除最低的一個數字，將最高的三個數字相加。重複此程序六次，生成您的命運數值池：</p>
+                        <p class="text-gray-400 text-sm">依 D&D 5E 規範，系統將進行 4次 D6 骰點判定，並自動扣除最低的一個數字，將最高的三個數字相加。若不執行判定，將採用標準開局陣列：</p>
                         
                         <div class="flex items-center gap-4 bg-black/30 p-4 rounded border border-gray-800">
                             <button onclick="executeAttributeRolls()" class="btn-fantasy px-4 py-2 rounded text-xs font-bold text-amber-500 whitespace-nowrap"><i class="fa-solid fa-dice-d6 mr-1"></i> 執行 4D6 判定</button>
@@ -505,7 +476,6 @@
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 ${['str','dex','con','int','wis','cha'].map(key => {
                                     let label = {str:'力量 (STR)', dex:'敏捷 (DEX)', con:'體質 (CON)', int:'智力 (INT)', wis:'感知 (WIS)', cha:'魅力 (CHA)'}[key];
-                                    // 依 5E 規範定義不擲骰時的標準陣列基本數值
                                     let baseVal = {str:15, dex:14, con:13, int:12, wis:10, cha:8}[key];
                                     return `
                                         <div class="flex items-center justify-between bg-gray-900/60 p-2 rounded border border-gray-800">
@@ -520,14 +490,8 @@
                                         </div>
                                     `;
                                 }).join('')}
-                                                </select>
-                                                <span id="mod-${key}" class="text-xs text-gray-400 font-bold w-10 text-center">(+0)</span>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
                             </div>
-                            <p class="text-[11px] text-gray-500 italic mt-3">* 提醒：您選擇的種族能力加值將在踏入深淵時由系統自動加上。選項中可重複選擇同組數值進行配置分配。</p>
+                            <p class="text-[11px] text-gray-500 italic mt-3">* 提醒：您選擇的種族能力加值將在踏入深淵時由系統自動計算並加上。</p>
                         </div>
                     </div>
                 `;
@@ -537,7 +501,7 @@
             }
         }
 
-        // --- 階段切換與資料保存邏輯 ---
+        // --- 核心邏輯函式群 ---
         function setPlayerCount(n) { setupState.count = n; setupState.step = 2; renderSetup(); }
         function setWorld(w) { Game.world = w; setupState.step = 3; renderSetup(); }
         
@@ -559,6 +523,7 @@
                 <div class="text-xs text-gray-400"><strong class="text-amber-600/80">特質能力：</strong>${data.traits}</div>
             `;
         }
+
         function savePhase4Race() {
             let nameInput = document.getElementById('hero-name');
             setupState.tempHero.name = nameInput ? nameInput.value.trim() : "無名者";
@@ -576,17 +541,7 @@
             setupState.tempHero.class = c; 
             renderSetup(); 
         }
-        function updateClassUI(c) {
-            const box = document.getElementById('class-details-box');
-            if(!box) return;
-            const data = DND_DATA.classes[c];
-            box.innerHTML = `
-                <div class="text-amber-500 font-bold">【職業天命】${c} (生命骰：${data.hpDice})</div>
-                <div class="text-gray-400 text-xs italic mb-1">配點建議：${data.suggest}</div>
-                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">豁免熟練：</strong>${data.save}</div>
-                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">起始裝備：</strong>${data.gear}</div>
-            `;
-        }
+
         function savePhase4Class() {
             if(!setupState.tempHero.class) {
                 alert("請先抉擇英雄的天命職業！");
@@ -596,7 +551,6 @@
             renderSetup();
         }
 
-        // --- 4D6 判定與配置演算邏輯 ---
         function executeAttributeRolls() {
             setupState.rolledPool = [];
             for (let i = 0; i < 6; i++) {
@@ -604,29 +558,19 @@
                 for (let j = 0; j < 4; j++) {
                     rolls.push(Math.floor(Math.random() * 6) + 1);
                 }
-                rolls.sort((a, b) => b - a); // 降序排列
-                let sumTop3 = rolls[0] + rolls[1] + rolls[2]; // 取最高三個相加
+                rolls.sort((a, b) => b - a); 
+                let sumTop3 = rolls[0] + rolls[1] + rolls[2]; 
                 setupState.rolledPool.push(sumTop3);
             }
             renderSetup();
         }
 
         function getDndModifier(score) {
-            if (score <= 1) return -5;
-            if (score <= 3) return -4;
-            if (score <= 5) return -3;
-            if (score <= 7) return -2;
-            if (score <= 9) return -1;
-            if (score <= 11) return 0;
-            if (score <= 13) return 1;
-            if (score <= 15) return 2;
-            if (score <= 17) return 3;
-            if (score <= 19) return 4;
-            if (score <= 21) return 5;
-            if (score <= 23) return 6;
-            if (score <= 25) return 7;
-            if (score <= 27) return 8;
-            if (score <= 29) return 9;
+            if (score <= 1) return -5; if (score <= 3) return -4; if (score <= 5) return -3;
+            if (score <= 7) return -2; if (score <= 9) return -1; if (score <= 11) return 0;
+            if (score <= 13) return 1; if (score <= 15) return 2; if (score <= 17) return 3;
+            if (score <= 19) return 4; if (score <= 21) return 5; if (score <= 23) return 6;
+            if (score <= 25) return 7; if (score <= 27) return 8; if (score <= 29) return 9;
             return 10;
         }
 
@@ -643,7 +587,6 @@
         }
 
         function finalizeHeroCreation() {
-            // 讀取玩家手動選定的六大基礎能力值
             ['str','dex','con','int','wis','cha'].forEach(key => {
                 let select = document.getElementById(`sel-${key}`);
                 if(select) {
@@ -651,17 +594,14 @@
                 }
             });
 
-            // 套用種族能力值加值修正
             const raceData = DND_DATA.races[setupState.tempHero.race];
             raceData.applyBonus(setupState.tempHero.stats);
 
-            // 計算初始生命值 (1級生命值：Max生命骰 + 體質調整值)
             const classData = DND_DATA.classes[setupState.tempHero.class];
             let maxHpValue = classData.hpDice === "1D12" ? 12 : (classData.hpDice === "1D10" ? 10 : (classData.hpDice === "1D8" ? 8 : 6));
             let finalHp = maxHpValue + getDndModifier(setupState.tempHero.stats.con);
             if(finalHp <= 0) finalHp = 1;
 
-            // 將裝備名稱拆分進背包
             const initialGearList = classData.gear.split('、');
 
             Game.players = [{
@@ -680,7 +620,35 @@
             startGame();
         }
 
-        // --- 進入跑團主迴圈流程 ---
+        // --- 畫面與通訊核心 ---
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function changeTab(tab) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab'));
+            document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active-tab');
+            
+            if(tab === 'status') renderStatus();
+            if(tab === 'inventory') renderInventory();
+            if(tab === 'party') renderParty();
+        }
+
+        function addLog(sender, text) {
+            const log = document.getElementById('game-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${sender === 'GM' ? 'log-gm' : (sender === '系統' ? 'log-system' : 'log-player')}`;
+            
+            let prefix = sender === 'GM' ? '<i class="fa-solid fa-dragon text-amber-500 mr-2"></i>GM' : (sender === '系統' ? '<i class="fa-solid fa-gear mr-1"></i> 系統' : '玩家');
+            entry.innerHTML = `<strong>${prefix}:</strong> <div class="mt-1">${text}</div>`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
         function startGame() {
             showScreen('screen-game');
             updateQuickStats();
@@ -689,7 +657,6 @@
             addLog('系統', `全端架構部署綠燈。核心引擎對接：【Gemini-2.5-Flash】。`);
             document.getElementById('summary-narrative').innerText = `${p.name} (${p.title}) 抵達了 ${Game.location}。`;
 
-            // 組裝發送給 Gemini-2.5-Flash 的精準提示詞 (Prompt)
             const initPrompt = `請扮演龍與地下城(D&D 5E)的嚴謹GM，所有判定完全參照5etools資料庫。
             【當前戰役設定】
             宏觀世界觀與法則：${Game.world} (若設定為AI隨機創立世界觀，請由你全權隨機生成一個硬核、符合5E風味的奇幻黑暗世界)。
@@ -725,10 +692,7 @@
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        prompt: prompt, 
-                        history: chatHistory 
-                    })
+                    body: JSON.stringify({ prompt: prompt, history: chatHistory })
                 });
 
                 if (!response.ok) throw new Error(`HTTP 錯誤: ${response.status}`);
@@ -752,7 +716,7 @@
             }
         }
 
-        // --- 介面分頁與數值渲染器 ---
+        // --- 介面渲染函式 ---
         function renderStatus() {
             const container = document.getElementById('player-status-container');
             container.innerHTML = Game.players.map(p => `
@@ -849,11 +813,9 @@
             });
         }
 
-        // --- 命運之骰機制 ---
         function roll(sides) {
             const box = document.getElementById('dice-visual-box');
             const display = document.getElementById('dice-display');
-            
             box.classList.remove('dice-rolling');
             void box.offsetWidth; 
             box.classList.add('dice-rolling');
@@ -870,12 +832,12 @@
                     box.style.color = "var(--accent-amber)";
                     box.style.borderColor = "var(--accent-amber)";
                     box.style.textShadow = "0 0 10px rgba(212,175,55,0.8)";
-                    resultText += ` <span class="text-amber-500 font-bold">★ 大成功! ★</span>`;
+                    resultText += ` <span class="text-amber-500 ml-2">★ 大成功 (Critical Success)! ★</span>`;
                 } else if(sides === 20 && res === 1) {
                     box.style.color = "#ef4444";
                     box.style.borderColor = "#ef4444";
                     box.style.textShadow = "0 0 10px rgba(239,68,68,0.8)";
-                    resultText += ` <span class="text-red-500 font-bold">☠ 大失敗! ☠</span>`;
+                    resultText += ` <span class="text-red-500 ml-2">☠ 大失敗 (Critical Miss)! ☠</span>`;
                 } else {
                     box.style.color = "white";
                     box.style.borderColor = "var(--border-runic)";
