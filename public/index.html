@@ -2,117 +2,128 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>深淵與龍：GM 輔助系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深淵與龍：極致 GM 輔助系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --bg-dark: #111827; --panel-bg: #1f2937; --text-main: #d1d5db; --text-highlight: #fcd34d; }
-        body { font-family: 'Noto Serif TC', serif; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; }
-        .screen { display: none; opacity: 0; transition: opacity 0.5s ease; }
-        .screen.active { display: flex; opacity: 1; }
-        .btn-fantasy { background: linear-gradient(to bottom, #374151, #1f2937); border: 1px solid #4b5563; color: var(--text-main); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Cinzel:wght@400;700&display=swap');
+        
+        :root {
+            --bg-deep: #0f1115;
+            --panel-grey: #1c1e22;
+            --border-runic: #3f444b;
+            --accent-amber: #d4af37;
+            --text-silver: #b0b4b8;
+        }
+
+        body {
+            font-family: 'Noto Serif TC', serif;
+            background-color: var(--bg-deep);
+            color: var(--text-silver);
+            overflow: hidden;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
+        }
+
+        .cinzel { font-family: 'Cinzel', serif; }
+
+        /* 羊皮紙質感灰色漸變 */
+        .parchment-grey {
+            background: linear-gradient(135deg, #2c2f35 0%, #1c1e22 100%);
+            position: relative;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .runic-border {
+            border: 2px solid var(--border-runic);
+            position: relative;
+        }
+
+        .runic-border::before {
+            content: "ᚱᚢᚾᛖ";
+            position: absolute;
+            top: -10px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-deep);
+            padding: 0 10px;
+            color: var(--accent-amber);
+            font-size: 12px;
+            letter-spacing: 5px;
+            opacity: 0.6;
+        }
+
+        /* 捲軸美化 */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #111; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--border-runic); border-radius: 3px; }
+
+        .btn-fantasy {
+            background: linear-gradient(to bottom, #3a3f47, #24282e);
+            border: 1px solid var(--border-runic);
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .btn-fantasy:hover {
+            border-color: var(--accent-amber);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            color: white;
+        }
+
+        .active-tab {
+            color: var(--accent-amber) !important;
+            border-left: 4px solid var(--accent-amber);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .log-gm { border-left: 3px solid var(--accent-amber); padding-left: 1rem; margin-bottom: 1.5rem; color: #d1d5db; line-height: 1.7; }
+        .log-player { text-align: right; color: #88929b; font-style: italic; margin-bottom: 1rem; }
+        .log-system { background: rgba(255,255,255,0.03); text-align: center; font-size: 0.85rem; padding: 0.5rem; border-radius: 4px; margin: 1rem 0; color: var(--accent-amber); }
+
+        .screen { display: none; }
+        .screen.active { display: flex; }
+
+        /* 骰子動畫 */
+        @keyframes roll {
+            0% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(90deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .dice-rolling { animation: roll 0.6s ease-out; }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col items-center justify-center">
+<body class="h-screen w-screen">
 
-    <div id="screen-main" class="screen active flex-col items-center justify-center w-full h-full">
-        <h1 class="text-6xl font-black mb-4 text-amber-500">DRAGONS & DUNGEONS</h1>
-        <button onclick="showScreen('screen-setup')" class="btn-fantasy py-3 px-6 rounded text-lg font-bold">開始冒險</button>
-    </div>
-
-    <div id="screen-setup" class="screen flex-col w-full h-full p-6">
-        <div class="bg-gray-800 p-8 rounded shadow-xl">
-            <h2 class="text-2xl text-amber-500 mb-4">系統初始化完成</h2>
-            <button onclick="completeSetup()" class="btn-fantasy py-2 px-6 rounded">進入遊戲</button>
+    <div id="screen-main" class="screen active flex-col items-center justify-center h-full w-full">
+        <div class="text-center mb-12">
+            <h1 class="text-7xl font-black cinzel tracking-widest text-white mb-2">DUNGEONS</h1>
+            <h1 class="text-5xl font-light cinzel tracking-widest text-amber-600 mb-6">& ABYSS</h1>
+            <p class="text-gray-500 tracking-widest uppercase text-sm">Automated GM Oracle System</p>
+            <div class="h-px w-64 bg-gradient-to-r from-transparent via-amber-700 to-transparent mx-auto mt-4"></div>
+        </div>
+        <div class="flex flex-col gap-4 w-72">
+            <button onclick="initSetup()" class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 開始冒險
+            </button>
+            <button class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3 opacity-40 cursor-not-allowed">
+                <i class="fa-solid fa-clock-rotate-left"></i> 繼續遊戲
+            </button>
+            <button onclick="window.close()" class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3">
+                <i class="fa-solid fa-skull"></i> 離開世界
+            </button>
         </div>
     </div>
 
-    <div id="screen-game" class="screen w-full h-full flex flex-col md:flex-row bg-gray-900">
-        <main class="flex-grow p-6">
-            <div id="story-log" class="h-3/4 overflow-y-auto bg-gray-800 p-4 rounded mb-4"></div>
-            <input type="text" id="player-input" class="w-full bg-gray-800 p-3 text-white border border-gray-600 rounded" placeholder="輸入動作...">
-            <button onclick="submitAction()" class="mt-2 btn-fantasy py-2 px-6 rounded">送出行動</button>
-            <div id="suggested-actions" class="mt-2 flex gap-2"></div>
-        </main>
+    <div id="screen-setup" class="screen flex-col items-center justify-center h-full w-full p-10">
+        <div class="parchment-grey runic-border w-full max-w-3xl rounded-lg p-10 flex flex-col h-[80vh]">
+            <div id="setup-header" class="text-2xl text-amber-500 font-bold mb-6 border-b border-gray-700 pb-4 cinzel">
+                Phase I: The Gathering
+            </div>
+            <div id="setup-body" class="flex-grow overflow-y-auto custom-scroll pr-4 space-y-6 text-lg">
+                </div>
+            <div id="setup-footer" class="mt-8 flex justify-end">
+                </div>
+        </div>
     </div>
 
-    <script>
-        const state = { playerA: { stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 } } };
-
-        // 串接您的 api/generate.js (Gemini API)
-        async function callGameAPI(userAction) {
-            const API_URL = "/api/generate"; 
-            
-            // 組合給 Gemini 的提示詞，加入 GM 人設與玩家當前動作
-            const systemPrompt = `你現在是龍與地下城(D&D 5E)的嚴謹GM。玩家動作：「${userAction}」。請描述場景與結果。`;
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        prompt: systemPrompt,
-                        history: [] // 若需記憶劇情，後續可在此帶入歷史紀錄陣列
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`伺服器回應錯誤: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                // 您的 generate.js 是回傳 { reply: text }
-                addLog('GM', data.reply.replace(/\n/g, '<br>'));
-                
-                // 暫時給予泛用選項，以配合 Gemini 純文字回傳
-                setSuggestedActions(["繼續探索", "檢查四周", "查看自身狀態"]);
-                
-            } catch (error) {
-                console.error("Fetch 錯誤細節:", error);
-                addLog('系統', '<span class="text-red-500">API 連線失敗：' + error.message + '</span>');
-                document.getElementById('suggested-actions').innerHTML = '';
-            }
-        }
-
-        function addLog(sender, text) {
-            const log = document.getElementById('story-log');
-            log.innerHTML += `<div class="mb-3"><strong>${sender}:</strong> ${text}</div>`;
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function setSuggestedActions(actions) {
-            const container = document.getElementById('suggested-actions');
-            container.innerHTML = '';
-            actions.forEach(act => {
-                const btn = document.createElement('button');
-                btn.className = "btn-fantasy p-2 rounded text-sm";
-                btn.innerText = act;
-                btn.onclick = () => { document.getElementById('player-input').value = act; submitAction(); };
-                container.appendChild(btn);
-            });
-        }
-
-        function submitAction() {
-            const input = document.getElementById('player-input');
-            if(!input.value) return;
-            addLog('Player', input.value);
-            document.getElementById('suggested-actions').innerHTML = '<span class="text-gray-500 italic">Gemini 正在計算命運...</span>';
-            callGameAPI(input.value);
-            input.value = '';
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function completeSetup() {
-            showScreen('screen-game');
-            addLog('系統', '冒險開始... 請輸入您的第一個動作。');
-        }
-
-        window.onload = () => showScreen('screen-main');
-    </script>
-</body>
-</html>
+    <div id="screen-game" class="screen h-full w-full flex overflow-hidden">
