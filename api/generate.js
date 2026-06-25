@@ -1,4 +1,3 @@
-// 關鍵修正：將 require 改為 import，以符合 type: module 的規範
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
@@ -13,8 +12,8 @@ export default async function handler(req, res) {
         const apiKey = process.env.GEMINI_API_KEY;
         const genAI = new GoogleGenerativeAI(apiKey);
         
-        // 使用目前支援度與穩定性最高的 gemini-1.5-pro
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+        // 依照您的要求，強制指定模型為 gemini-2.5-flash
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const { prompt, history } = req.body;
         const chat = model.startChat({ history: history || [] });
