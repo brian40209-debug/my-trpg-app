@@ -1,35 +1,28 @@
-// api/generate.js
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// 初始化 Gemini API，確保您的環境變數中已設定 GEMINI_API_KEY
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-module.exports = async (req, res) => {
-  // 僅允許 POST 請求
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ error: '只允許 POST' });
 
-  const { prompt, history } = req.body;
+    try {
+        const apiKey = process.env.GEMINI_API_KEY;
+        const genAI = new GoogleGenerativeAI(apiKey);
+        
+        // 【關鍵修正】改用 gemini-1.5-flash-latest，這通常能解決 404 問題
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
-  try {
-    // 使用模型 (建議使用 gemini-1.5-flash 或 gemini-1.5-pro)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const { prompt, history } = req.body;
+        const chat = model.startChat({ history: history || [] });
+        const result = await chat.sendMessage(prompt);
+        const responseText = result.response.text();
 
-    // 啟動對話會話 (包含之前的歷史紀錄)
-    const chat = model.startChat({
-      history: history || [],
-    });
-
-    // 發送玩家的動作
-    const result = await chat.sendMessage(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // 回傳 AI 的回應給前端
-    res.status(200).json({ reply: text });
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    res.status(500).json({ error: "無法連接至 AI 引擎" });
-  }
-};
+        return res.status(200).json({ reply: responseText });
+    } catch (error) {
+        console.error("Gemini API 處理失敗:", error);
+        return res.status(500).json({ error: error.message });
+    }
+}
