@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const genAI = new GoogleGenerativeAI(apiKey);
         
         // 依照您的要求，強制指定模型為 gemini-2.5-flash
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const { prompt, history } = req.body;
         const chat = model.startChat({ history: history || [] });
