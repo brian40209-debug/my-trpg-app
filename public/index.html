@@ -674,19 +674,18 @@
             updateQuickStats();
             
             const p = Game.players[0];
-            addLog('系統', `全端架構部署綠燈。核心引擎對接：【Gemini-2.5-Flash】。`);
+            addLog('系統', `全端架構部署綠燈。角色載入：${p.name}。`);
             document.getElementById('summary-narrative').innerText = `${p.name} (${p.title}) 抵達了 ${Game.location}。`;
 
-            const initPrompt = `請扮演龍與地下城(D&D 5E)的嚴謹GM，所有判定完全參照5etools資料庫。
-            【當前戰役設定】
-            宏觀世界觀與法則：${Game.world} (若設定為AI隨機創立世界觀，請由你全權隨機生成一個硬核、符合5E風味的奇幻黑暗世界)。
-            起點境地：${Game.location}。
-            英雄宿命背景：${Game.mission}。
-            【玩家英雄角色資訊】
-            名諱：${p.name}。種族：${p.race}。天命職業：${p.class}。等級：1。
-            當前數值狀態：力量 ${p.stats.str}、敏捷 ${p.stats.dex}、體質 ${p.stats.con}、智力 ${p.stats.int}、感知 ${p.stats.wis}、魅力 ${p.stats.cha}。
-            【GM當前任務】
-            請根據以上背景與起始條件，撰寫一段極具沉浸感、文字考究的跑團劇本開場。請細緻描繪周遭的環境色調與突發事件，並在最後提供3個具體的行動選擇按鈕建議。`;
+            // 將角色定義直接存入 chatHistory 的開頭
+            const heroData = `玩家角色定義：名諱${p.name}，種族${p.race}，職業${p.class}，能力值(力${p.stats.str}, 敏${p.stats.dex}, 體${p.stats.con}, 智${p.stats.int}, 感${p.stats.wis}, 魅${p.stats.cha})。請在後續所有判定中嚴格以此數值作為規則依據。`;
+            const initPrompt = `請扮演D&D 5E嚴謹GM。世界觀：${Game.world}。起點：${Game.location}。使命：${Game.mission}。請參考玩家資訊：${heroData}。請撰寫開場劇本，並提供3個具體行動建議。`;
+
+            // 初始化對話歷史，讓 AI 第一條訊息就記住角色設定
+            chatHistory = [
+                { role: "user", parts: [{ text: heroData }] },
+                { role: "model", parts: [{ text: "收到，已記錄玩家英雄資訊，將在後續戰役中嚴格依此進行判定。" }] }
+            ];
 
             callGameAPI(initPrompt, true);
         }
@@ -731,7 +730,12 @@
                 if (!response.ok) throw new Error(`HTTP 錯誤: ${response.status}`);
 
                 const data = await response.json();
-                
+
+                // --- 新增：將對話存入歷史紀錄，維持記憶 ---
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                chatHistory.push({ role: "model", parts: [{ text: data.reply }] });
+                // --- 結束 ---
+
                 // 收到回覆後，移除神諭加載提示
                 const indicator = document.getElementById('loading-indicator');
                 if(indicator) indicator.parentElement.remove();
