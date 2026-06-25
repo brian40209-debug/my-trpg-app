@@ -27,7 +27,6 @@
 
         .cinzel { font-family: 'Cinzel', serif; }
 
-        /* 羊皮紙質感灰色漸變 */
         .parchment-grey {
             background: linear-gradient(135deg, #2c2f35 0%, #1c1e22 100%);
             position: relative;
@@ -52,7 +51,6 @@
             opacity: 0.6;
         }
 
-        /* 捲軸美化 */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #111; }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--border-runic); border-radius: 3px; }
@@ -83,10 +81,9 @@
         .screen { display: none; }
         .screen.active { display: flex; }
 
-        /* 骰子動畫 */
         @keyframes roll {
             0% { transform: rotate(0deg) scale(1); }
-            20% { transform: rotate(90deg) scale(1.2); }
+            20 { transform: rotate(90deg) scale(1.2); }
             100% { transform: rotate(360deg) scale(1); }
         }
         .dice-rolling { animation: roll 0.6s ease-out; }
@@ -102,26 +99,26 @@
             <div class="h-px w-64 bg-gradient-to-r from-transparent via-amber-700 to-transparent mx-auto mt-4"></div>
         </div>
         <div class="flex flex-col gap-4 w-72">
-            <button onclick="initSetup()" class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3">
+            <button onclick="initSetup()" class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3 text-white">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> 開始冒險
             </button>
-            <button class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3 opacity-40 cursor-not-allowed">
+            <button class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3 opacity-40 cursor-not-allowed text-gray-500">
                 <i class="fa-solid fa-clock-rotate-left"></i> 繼續遊戲
             </button>
-            <button onclick="window.close()" class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3">
+            <button onclick="window.close()" class="btn-fantasy py-4 px-6 rounded text-lg font-bold flex items-center justify-center gap-3 text-white">
                 <i class="fa-solid fa-skull"></i> 離開世界
             </button>
         </div>
     </div>
 
     <div id="screen-setup" class="screen flex-col items-center justify-center h-full w-full p-10">
-        <div class="parchment-grey runic-border w-full max-w-3xl rounded-lg p-10 flex flex-col h-[80vh]">
+        <div class="parchment-grey runic-border w-full max-w-4xl rounded-lg p-10 flex flex-col h-[85vh]">
             <div id="setup-header" class="text-2xl text-amber-500 font-bold mb-6 border-b border-gray-700 pb-4 cinzel">
                 Phase I: The Gathering
             </div>
-            <div id="setup-body" class="flex-grow overflow-y-auto custom-scroll pr-4 space-y-6 text-lg">
+            <div id="setup-body" class="flex-grow overflow-y-auto custom-scroll pr-4 space-y-6 text-base">
                 </div>
-            <div id="setup-footer" class="mt-8 flex justify-end">
+            <div id="setup-footer" class="mt-8 flex justify-between border-t border-gray-800 pt-4">
                 </div>
         </div>
     </div>
@@ -148,10 +145,8 @@
 
         <main class="flex-grow flex flex-col bg-gray-900/50">
             <div id="content-area" class="flex-grow overflow-y-auto p-6 custom-scroll">
-                
                 <div id="tab-adventure" class="tab-pane h-full flex flex-col">
-                    <div id="game-log" class="flex-grow space-y-4 pb-10">
-                        </div>
+                    <div id="game-log" class="flex-grow space-y-4 pb-10"></div>
                 </div>
 
                 <div id="tab-summary" class="tab-pane hidden space-y-8">
@@ -182,12 +177,10 @@
                     <h2 class="text-3xl cinzel text-amber-500">Treasury & Gear</h2>
                     <div id="inventory-container"></div>
                 </div>
-
             </div>
 
             <section id="action-bar" class="bg-gray-800/80 border-t border-gray-700 p-6">
-                <div id="choice-buttons" class="grid grid-cols-3 gap-4 mb-4">
-                    </div>
+                <div id="choice-buttons" class="grid grid-cols-3 gap-4 mb-4"></div>
                 <div class="flex gap-3">
                     <input type="text" id="free-input" placeholder="或是輸入自訂意志..." class="flex-grow bg-black/50 border border-gray-600 rounded px-4 py-2 text-white focus:border-amber-500 outline-none" onkeypress="if(event.key === 'Enter') handleAction()">
                     <button id="submit-btn" onclick="handleAction()" class="btn-fantasy px-8 py-2 rounded font-bold text-amber-500">決斷</button>
@@ -198,12 +191,7 @@
         <aside class="w-72 bg-black/80 border-l border-gray-800 p-6 flex flex-col">
             <div class="flex-grow space-y-6">
                 <h3 class="cinzel text-amber-600 text-lg border-b border-amber-900/50 pb-2">Fate Tracker</h3>
-                <div id="quick-combat" class="hidden">
-                    <div class="text-xs text-red-500 mb-2 uppercase tracking-tighter">Combat Initiative</div>
-                    <div id="combat-list" class="space-y-2"></div>
-                </div>
-                <div id="quick-stats" class="space-y-4 text-sm text-gray-300">
-                    </div>
+                <div id="quick-stats" class="space-y-4 text-sm text-gray-300"></div>
             </div>
 
             <div class="runic-border p-4 rounded bg-gray-900/80 mt-auto">
@@ -211,7 +199,7 @@
                     <span class="text-xs cinzel opacity-50">Roll for Destiny</span>
                     <div id="dice-display" class="text-2xl font-black text-amber-500">--</div>
                 </div>
-                <div id="dice-visual-box" class="w-20 h-20 bg-gray-800 mx-auto rounded-xl flex items-center justify-center border-2 border-gray-600 shadow-lg mb-4 text-3xl font-bold">
+                <div id="dice-visual-box" class="w-20 h-20 bg-gray-800 mx-auto rounded-xl flex items-center justify-center border-2 border-gray-600 shadow-lg mb-4 text-3xl font-bold text-white">
                     ?
                 </div>
                 <div class="grid grid-cols-3 gap-2 text-white">
@@ -227,7 +215,6 @@
     </div>
 
     <script>
-        // --- 核心資料與對話歷史 ---
         let chatHistory = []; 
 
         const Game = {
@@ -235,66 +222,94 @@
             party: [
                 { name: "艾莉亞", title: "晨曦祭司", hp: 12, maxHp: 12, stats: { str: 8, dex: 12, con: 12, int: 10, wis: 16, cha: 14 }, skills: ["治療術", "神聖光輝"] }
             ],
-            world: "被遺忘的國度",
-            location: "無冬城",
-            mission: "尋找真相",
-            inventory: {
-                personal: ["粗糙的冒險包", "睡袋", "火把 x5"],
-                party: ["共用帳篷", "乾糧 x10"],
-                gold: 50,
-                questItems: []
-            }
+            world: "",
+            location: "",
+            mission: "",
+            inventory: { personal: [], party: ["共用帳篷", "乾糧 x10"], gold: 50 }
         };
 
         const setupState = {
-            step: 1, 
+            step: 1, // 1: 人數, 2: 世界觀, 3: 境地/宿命, 4: 選擇種族, 5: 選擇職業, 6: 判定分配屬性
             count: 1,
-            currentPlayerIdx: 0
+            tempHero: { name: "", race: "", class: "", stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 }, equipment: [] },
+            rolledPool: [] // 儲存 4D6 判定出的六組數值
         };
 
-        // --- UI 控制 ---
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+        // --- 靜態 D&D 5E 規則資料庫 ---
+        const DND_DATA = {
+            races: {
+                "矮人": {
+                    desc: "膽大剛毅的矮人作為老練的戰士、礦工，以及金屬工匠而聞名。體格矮胖壯碩，勇氣與耐力驚人。",
+                    bonus: "體質 +2",
+                    traits: "速度 25 呎（穿重甲不減速）、黑暗視覺 (60呎)、矮人剛毅（毒性豁免優勢與抗力）、矮人戰鬥訓練、石頭巧藝。",
+                    applyBonus: (s) => { s.con += 2; }
+                },
+                "精靈": {
+                    desc: "優雅脫俗、面容姣好，壽命極長。喜愛自由、多樣性與自我表達，擁有發達的口傳文化與美妙旋律。",
+                    bonus: "敏捷 +2",
+                    traits: "速度 30 呎、黑暗視覺 (60呎)、敏銳感覺（熟練感知）、妖精先祖（抗迷惑、免疫魔法睡眠）、冥想（每日出神 4 小時）。",
+                    applyBonus: (s) => { s.dex += 2; }
+                },
+                "半身人": {
+                    desc: "體型嬌小，關注基本需求，性格務實且容易滿足。擅長在巨大的世界中低調生存，具備直截了當的解決手段。",
+                    bonus: "敏捷 +2",
+                    traits: "速度 25 呎、幸運（骰出 1 點可重骰一次）、勇敢（抗恐慌豁免優勢）、半身人的靈巧（可穿過比自身大的生物空間）。",
+                    applyBonus: (s) => { s.dex += 2; }
+                },
+                "人類": {
+                    desc: "遷徙掠地、最具多樣性與適應力的種族。沒有典型特徵，擁有無限的野心與可能性。",
+                    bonus: "全能力 +1",
+                    traits: "速度 30 呎、自選一門額外語言。全能力值獲得微幅全面提升。",
+                    applyBonus: (s) => { s.str += 1; s.dex += 1; s.con += 1; s.int += 1; s.wis += 1; s.cha += 1; }
+                },
+                "龍人": {
+                    desc: "類人生物般站立的巨龍，強壯高大。傳承了巨龍先祖的吐息血脈，陣營傾向非善即惡的極端。",
+                    bonus: "力量 +2, 魅力 +1",
+                    traits: "速度 30 呎、體格高壯、手腳強壯。傳承古老巨龍之傲，兼具無上威儀與驚人力量。",
+                    applyBonus: (s) => { s.str += 2; s.cha += 1; }
+                },
+                "半獸人": {
+                    desc: "繼承歐克血統的突出口吻與魁梧身材。將傷疤視為榮譽與過去功勳的印記，作戰風格兇殘無比。",
+                    bonus: "力量 +2, 體質 +1",
+                    traits: "速度 30 呎、黑暗視覺 (60呎)、兇惡威迫（熟練威嚇）、殘暴耐力（生命值歸 0 時可改留 1 點）、野蠻攻擊（近戰重擊額外傷害）。",
+                    applyBonus: (s) => { s.str += 2; s.con += 1; }
+                }
+            },
+            classes: {
+                "牧師": {
+                    desc: "神聖魔法的導引者，集治癒振奮魔法與天罰神力於一身。憑藉 ایمان 與信仰對神意進行感應。",
+                    suggest: "最高分配給睿智 (WIS)，次高分配給力量 (STR) 或體質 (CON)。",
+                    hpDice: "1D8",
+                    save: "睿智、魅力",
+                    gear: "硬頭錘、鱗甲、輕弩與20支箭、探索者套裝、盾牌、聖徽"
+                },
+                "野蠻人": {
+                    desc: "來自曠野的荒野鬥士，鄙視文明的軟弱。能在戰鬥中汲取原始怒火進入狂暴狀態，實力深不可測。",
+                    suggest: "最高分配給力量 (STR)，次高分配給體質 (CON)。",
+                    hpDice: "1D12",
+                    save: "力量、體質",
+                    gear: "巨斧、兩把手斧、探索者套裝、5把標槍"
+                },
+                "遊俠": {
+                    desc: "荒野的致命獵手，專精於追蹤特定宿敵與荒野求生。能驅使與自然調和的魔法，注重速度與隱匿。",
+                    suggest: "最高分配給敏捷 (DEX)，次高分配給睿智 (WIS)。",
+                    hpDice: "1D10",
+                    save: "力量、敏捷",
+                    gear: "鱗甲、兩柄短劍、地城探險家套裝、長弓與20支箭"
+                },
+                "法師": {
+                    desc: "透過經年累月的研究、魔典記錄與精密計算來掌控祕法的施法者。魔法儲備源於自身的至高智力。",
+                    suggest: "最高分配給智力 (INT)，次高分配給體質 (CON) 或敏捷 (DEX)。",
+                    hpDice: "1D6",
+                    save: "智力、睿智",
+                    gear: "長棍、材料包、學者套裝、法術書"
+                }
+            }
+        };
 
-        function changeTab(tab) {
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-tab'));
-            document.querySelector(`[onclick="changeTab('${tab}')"]`).classList.add('active-tab');
-            
-            if(tab === 'status') renderStatus();
-            if(tab === 'inventory') renderInventory();
-            if(tab === 'party') renderParty();
-        }
-
-        function addLog(sender, text) {
-            const log = document.getElementById('game-log');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${sender === 'GM' ? 'log-gm' : (sender === '系統' ? 'log-system' : 'log-player')}`;
-            
-            let prefix = sender === 'GM' ? '<i class="fa-solid fa-dragon text-amber-500 mr-2"></i>GM' : (sender === '系統' ? '<i class="fa-solid fa-gear mr-1"></i> 系統' : '玩家');
-            entry.innerHTML = `<strong>${prefix}:</strong> <div class="mt-1">${text}</div>`;
-            
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function setChoices(choices) {
-            const btnArea = document.getElementById('choice-buttons');
-            btnArea.innerHTML = '';
-            choices.forEach(c => {
-                const b = document.createElement('button');
-                b.className = 'btn-fantasy py-2 px-4 rounded text-xs text-left truncate';
-                b.innerText = c;
-                b.onclick = () => handleAction(c);
-                btnArea.appendChild(b);
-            });
-        }
-
-        // --- 遊戲設定與開局 ---
+        // --- 設定流程渲染控制 ---
         function initSetup() {
+            setupState.step = 1;
             showScreen('screen-setup');
             renderSetup();
         }
@@ -305,128 +320,334 @@
             body.innerHTML = '';
             footer.innerHTML = '';
 
+            // 建立通用的返回按鈕邏輯
+            let backBtn = document.createElement('button');
+            backBtn.className = "btn-fantasy px-6 py-2 rounded text-gray-400 font-bold";
+            backBtn.innerText = "返回";
+            if (setupState.step === 1) {
+                backBtn.onclick = () => showScreen('screen-main');
+            } else {
+                backBtn.onclick = () => { setupState.step--; renderSetup(); };
+            }
+            footer.appendChild(backBtn);
+
+            let nextContainer = document.createElement('div');
+
             if (setupState.step === 1) {
                 document.getElementById('setup-header').innerText = "Phase I: 旅者的人數";
                 body.innerHTML = `
                     <p class="text-gray-400">冒險即將展開，請問有多少位英雄準備踏入此間？</p>
                     <div class="flex gap-4">
-                        <button onclick="setPlayerCount(1)" class="btn-fantasy p-4 rounded w-full">獨行冒險 (1人)</button>
-                        <button onclick="setPlayerCount(2)" class="btn-fantasy p-4 rounded w-full opacity-50">命運雙子 (開發中)</button>
-                        <button onclick="setPlayerCount(3)" class="btn-fantasy p-4 rounded w-full opacity-50">傳奇小隊 (開發中)</button>
+                        <button onclick="setPlayerCount(1)" class="btn-fantasy p-4 rounded w-full text-white font-bold">獨行冒險 (1人)</button>
+                        <button class="btn-fantasy p-4 rounded w-full opacity-40 cursor-not-allowed text-gray-600">命運雙子 (開發中)</button>
                     </div>
                 `;
-            } else if (setupState.step === 2) {
+            } 
+            else if (setupState.step === 2) {
                 document.getElementById('setup-header').innerText = "Phase II: 世界與法則";
                 body.innerHTML = `
-                    <p class="text-gray-400 mb-4">請選擇將要進入的世界觀：</p>
+                    <p class="text-gray-400 mb-4">請選擇您將要踏入的宏觀架構或法則：</p>
                     <div class="grid grid-cols-1 gap-4 text-white">
                         <button onclick="setWorld('被遺忘的國度 (費倫)')" class="btn-fantasy text-left p-4 rounded">
                             <b class="text-amber-500">被遺忘的國度 (Forgotten Realms)</b><br>
-                            <span class="text-sm text-gray-400">標準劍與魔法，眾神林立。</span>
+                            <span class="text-sm text-gray-400">標準 5E 劍與魔法，眾神林立與傳奇並存。</span>
                         </button>
                         <button onclick="setWorld('艾伯倫 (魔法龐克)')" class="btn-fantasy text-left p-4 rounded">
                             <b class="text-amber-500">艾伯倫 (Eberron)</b><br>
-                            <span class="text-sm text-gray-400">魔法科技並行，充滿陰謀與閃電列車。</span>
+                            <span class="text-sm text-gray-400">魔法與工業科技並行，充滿黑色電影的陰謀宿命。</span>
                         </button>
-                        <button onclick="setWorld('自訂黑暗奇幻世界')" class="btn-fantasy text-left p-4 rounded">
-                            <b class="text-amber-500">渾沌之始 (未知領域)</b><br>
-                            <span class="text-sm text-gray-400">由系統根據後續決策即時生成的殘酷世界。</span>
+                        <button onclick="setWorld('由AI隨機創立世界觀')" class="btn-fantasy text-left p-4 rounded border-amber-600/50">
+                            <b class="text-amber-500"><i class="fa-solid fa-dice-d20 text-xs mr-1"></i> 渾沌之始 (未知領域)</b><br>
+                            <span class="text-sm text-amber-500/80">【變動機制】將由 AI 隨機創立宏觀世界觀與獨特法則。</span>
                         </button>
                     </div>
                 `;
-            } else if (setupState.step === 3) {
+            } 
+            else if (setupState.step === 3) {
                 document.getElementById('setup-header').innerText = "Phase III: 初始境地與宿命";
                 body.innerHTML = `
+                    <div class="bg-amber-950/20 border border-amber-900/40 p-4 rounded mb-6 text-sm text-amber-500 flex items-start gap-2">
+                        <i class="fa-solid fa-scale-balanced mt-0.5"></i>
+                        <span><strong>命運宣告：</strong>起始地點與玩家使命皆會影響故事發展（由 GM 依照 D&D 5E 規則書判定）。</span>
+                    </div>
                     <div class="grid grid-cols-2 gap-8 text-white">
                         <div class="space-y-4">
                             <h4 class="text-amber-500 font-bold">起始地點</h4>
-                            <select id="start-loc" class="w-full bg-gray-900 p-3 border border-gray-600 rounded">
-                                <option value="喧囂的港口城市">港口都市</option>
-                                <option value="偏遠的礦業村落">邊境礦村</option>
-                                <option value="幽暗地底的邊緣">地底邊緣</option>
+                            <select id="start-loc" class="w-full bg-gray-900 p-3 border border-gray-600 rounded outline-none focus:border-amber-500">
+                                <option value="喧囂的港口城市 (碼頭暗巷)">港口都市 (都市地形)</option>
+                                <option value="偏遠的礦業村落 (法達林荒野)">邊境礦村 (山地地形)</option>
+                                <option value="幽暗地底的未知邊緣">地底邊緣 (洞窟地形)</option>
                             </select>
                         </div>
                         <div class="space-y-4">
                             <h4 class="text-amber-500 font-bold">玩家使命</h4>
-                            <select id="start-mission" class="w-full bg-gray-900 p-3 border border-gray-600 rounded">
+                            <select id="start-mission" class="w-full bg-gray-900 p-3 border border-gray-600 rounded outline-none focus:border-amber-500">
                                 <option value="尋找失蹤血親的孤兒">血親之仇 (身世悲慘)</option>
-                                <option value="尋找遠古神器的學者">學者的執念 (知性追求)</option>
-                                <option value="躲避追捕的王國逃兵">王國逃兵 (動盪求生)</option>
+                                <option value="尋找遠古神器的秘密學者">學者的執念 (知性追求)</option>
+                                <option value="躲避帝國追捕的王國逃兵">王國逃兵 (動盪求生)</option>
                             </select>
                         </div>
                     </div>
                 `;
-                footer.innerHTML = `<button onclick="nextStep()" class="btn-fantasy px-10 py-3 rounded font-bold text-amber-500">銘刻命運</button>`;
-            } else if (setupState.step === 4) {
-                document.getElementById('setup-header').innerText = `Phase IV: 創造英雄`;
+                nextContainer.innerHTML = `<button onclick="savePhase3()" class="btn-fantasy px-10 py-2 rounded font-bold text-amber-500">銘刻命運</button>`;
+                footer.appendChild(nextContainer);
+            } 
+            else if (setupState.step === 4) {
+                document.getElementById('setup-header').innerText = "Phase IV-1: 英雄的名諱與血脈";
                 body.innerHTML = `
                     <div class="space-y-6 text-white">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm text-gray-400 mb-2">英雄姓名</label>
-                                <input type="text" id="char-name" placeholder="輸入名諱..." class="w-full bg-gray-900 p-3 border border-gray-600 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-400 mb-2">職業選擇</label>
-                                <select id="char-class" class="w-full bg-gray-900 p-3 border border-gray-600 rounded">
-                                    <option value="戰士">戰士 (Fighter)</option>
-                                    <option value="法師">法師 (Wizard)</option>
-                                    <option value="遊蕩者">遊蕩者 (Rogue)</option>
-                                    <option value="牧師">牧師 (Cleric)</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">英雄姓名</label>
+                            <input type="text" id="hero-name" value="${setupState.tempHero.name}" placeholder="輸入名諱..." class="w-full bg-gray-900 p-3 border border-gray-600 rounded outline-none focus:border-amber-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-400 mb-2">屬性陣列 (標準配置)</label>
-                            <div class="grid grid-cols-6 gap-2 text-center text-sm">
-                                <div class="bg-gray-800 p-3 rounded border border-gray-700">STR <br><b class="text-lg text-amber-500">15</b></div>
-                                <div class="bg-gray-800 p-3 rounded border border-gray-700">DEX <br><b class="text-lg text-amber-500">14</b></div>
-                                <div class="bg-gray-800 p-3 rounded border border-gray-700">CON <br><b class="text-lg text-amber-500">13</b></div>
-                                <div class="bg-gray-800 p-3 rounded border border-gray-700">INT <br><b class="text-lg text-amber-500">12</b></div>
-                                <div class="bg-gray-800 p-3 rounded border border-gray-700">WIS <br><b class="text-lg text-amber-500">10</b></div>
-                                <div class="bg-gray-800 p-3 rounded border border-gray-700">CHA <br><b class="text-lg text-amber-500">8</b></div>
+                            <label class="block text-sm text-gray-400 mb-2">選擇您的種族（點擊查閱特質）</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                ${Object.keys(DND_DATA.races).map(r => `
+                                    <button onclick="selectRace('${r}')" class="btn-fantasy p-3 rounded text-sm text-center ${setupState.tempHero.race === r ? 'border-amber-500 text-amber-500 bg-amber-500/5' : ''}">
+                                        ${r}
+                                    </button>
+                                `).join('')}
                             </div>
+                        </div>
+                        <div id="race-details-box" class="runic-border p-4 rounded bg-black/40 min-h-[100px] text-sm">
+                            <span class="text-gray-500 italic">請選擇種族以顯現血脈特質...</span>
                         </div>
                     </div>
                 `;
-                footer.innerHTML = `<button onclick="createPlayer()" class="btn-fantasy px-10 py-3 rounded font-bold text-amber-500">踏入深淵</button>`;
+                nextContainer.innerHTML = `<button onclick="savePhase4Race()" class="btn-fantasy px-10 py-2 rounded font-bold text-amber-500">繼承血脈</button>`;
+                footer.appendChild(nextContainer);
+                if(setupState.tempHero.race) updateRaceUI(setupState.tempHero.race);
+            }
+            else if (setupState.step === 5) {
+                document.getElementById('setup-header').innerText = "Phase IV-2: 英雄的天命與職業";
+                body.innerHTML = `
+                    <div class="space-y-6 text-white">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">選擇您的天命職業</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                ${Object.keys(DND_DATA.classes).map(c => `
+                                    <button onclick="selectClass('${c}')" class="btn-fantasy p-4 rounded text-left ${setupState.tempHero.class === c ? 'border-amber-500 text-amber-500 bg-amber-500/5' : ''}">
+                                        <div class="font-bold text-base mb-1">${c}</div>
+                                        <div class="text-xs text-gray-400 truncate">${DND_DATA.classes[c].desc}</div>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div id="class-details-box" class="runic-border p-4 rounded bg-black/40 text-sm space-y-2">
+                            <span class="text-gray-500 italic">請抉擇職業以顯現天命特性...</span>
+                        </div>
+                    </div>
+                `;
+                nextContainer.innerHTML = `<button onclick="savePhase4Class()" class="btn-fantasy px-10 py-2 rounded font-bold text-amber-500">領受天命</button>`;
+                footer.appendChild(nextContainer);
+                if(setupState.tempHero.class) updateClassUI(setupState.tempHero.class);
+            }
+            else if (setupState.step === 6) {
+                document.getElementById('setup-header').innerText = "Phase IV-3: 命運屬性的隨機判定";
+                
+                let poolHTML = setupState.rolledPool.length > 0 
+                    ? setupState.rolledPool.map((v, i) => `<span class="bg-gray-800 border border-gray-700 font-bold px-3 py-1 rounded text-amber-400 text-lg">骰組 ${i+1}: ${v}</span>`).join(' ')
+                    : `<span class="text-gray-500 italic">尚未執行 4D6 命運判定</span>`;
+
+                body.innerHTML = `
+                    <div class="space-y-6 text-white">
+                        <p class="text-gray-400 text-sm">依 D&D 5E 規範，系統將進行 4次 D6 骰點判定，並自動扣除最低的一個數字，將最高的三個數字相加。重複此程序六次，生成您的命運數值池：</p>
+                        
+                        <div class="flex items-center gap-4 bg-black/30 p-4 rounded border border-gray-800">
+                            <button onclick="executeAttributeRolls()" class="btn-fantasy px-4 py-2 rounded text-xs font-bold text-amber-500 whitespace-nowrap"><i class="fa-solid fa-dice-d6 mr-1"></i> 執行 4D6 判定</button>
+                            <div class="flex flex-wrap gap-2">${poolHTML}</div>
+                        </div>
+
+                        <div class="runic-border p-4 rounded bg-black/40">
+                            <h4 class="text-sm font-bold text-amber-500 mb-3">六項能力值配置與調整值對照</h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                ${['str','dex','con','int','wis','cha'].map(key => {
+                                    let label = {str:'力量 (STR)', dex:'敏捷 (DEX)', con:'體質 (CON)', int:'智力 (INT)', wis:'睿智 (WIS)', cha:'魅力 (CHA)'}[key];
+                                    return `
+                                        <div class="flex items-center justify-between bg-gray-900/60 p-2 rounded border border-gray-800">
+                                            <span class="font-bold">${label}</span>
+                                            <div class="flex items-center gap-2">
+                                                <select id="sel-${key}" onchange="calcModifiers()" class="bg-black text-amber-400 border border-gray-700 rounded p-1 text-xs outline-none focus:border-amber-500">
+                                                    <option value="10">10 (基本)</option>
+                                                    ${setupState.rolledPool.map(num => `<option value="${num}">${num}</option>`).join('')}
+                                                </select>
+                                                <span id="mod-${key}" class="text-xs text-gray-400 font-bold w-10 text-center">(+0)</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <p class="text-[11px] text-gray-500 italic mt-3">* 提醒：您選擇的種族能力加值將在踏入深淵時由系統自動加上。選項中可重複選擇同組數值進行配置分配。</p>
+                        </div>
+                    </div>
+                `;
+                nextContainer.innerHTML = `<button onclick="finalizeHeroCreation()" class="btn-fantasy px-10 py-2 rounded font-bold text-amber-500">踏入深淵</button>`;
+                footer.appendChild(nextContainer);
+                calcModifiers();
             }
         }
 
+        // --- 階段切換與資料保存邏輯 ---
         function setPlayerCount(n) { setupState.count = n; setupState.step = 2; renderSetup(); }
         function setWorld(w) { Game.world = w; setupState.step = 3; renderSetup(); }
-        function nextStep() {
+        
+        function savePhase3() {
             Game.location = document.getElementById('start-loc').value;
             Game.mission = document.getElementById('start-mission').value;
             setupState.step = 4;
             renderSetup();
         }
-        function createPlayer() {
-            const name = document.getElementById('char-name').value || "無名者";
-            const cls = document.getElementById('char-class').value;
-            Game.players.push({
-                name: name, class: cls, level: 1, title: "默默無名的冒險者",
-                hp: 12, maxHp: 12,
-                stats: { str: 15, dex: 14, con: 13, int: 12, wis: 10, cha: 8 },
-                skills: ["基礎防禦", "武器熟練"]
+
+        function selectRace(r) { setupState.tempHero.race = r; updateRaceUI(r); renderSetup(); }
+        function updateRaceUI(r) {
+            const box = document.getElementById('race-details-box');
+            if(!box) return;
+            const data = DND_DATA.races[r];
+            box.innerHTML = `
+                <div class="text-amber-500 font-bold mb-1">【血脈天賦】${r}（能力修正：${data.bonus}）</div>
+                <div class="text-gray-300 mb-2 leading-relaxed">${data.desc}</div>
+                <div class="text-xs text-gray-400"><strong class="text-amber-600/80">特質能力：</strong>${data.traits}</div>
+            `;
+        }
+        function savePhase4Race() {
+            let nameInput = document.getElementById('hero-name');
+            setupState.tempHero.name = nameInput ? nameInput.value.trim() : "無名者";
+            if(!setupState.tempHero.name) setupState.tempHero.name = "無名者";
+            
+            if(!setupState.tempHero.race) {
+                alert("請先選定英雄的種族血脈！");
+                return;
+            }
+            setupState.step = 5;
+            renderSetup();
+        }
+
+        function selectClass(c) { setupState.tempHero.class = c; updateClassUI(c); renderSetup(); }
+        function updateClassUI(c) {
+            const box = document.getElementById('class-details-box');
+            if(!box) return;
+            const data = DND_DATA.classes[c];
+            box.innerHTML = `
+                <div class="text-amber-500 font-bold">【職業天命】${c} (生命骰：${data.hpDice})</div>
+                <div class="text-gray-400 text-xs italic mb-1">配點建議：${data.suggest}</div>
+                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">豁免熟練：</strong>${data.save.join('、')}</div>
+                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">起始初始裝備：</strong>${data.gear}</div>
+            `;
+        }
+        function savePhase4Class() {
+            if(!setupState.tempHero.class) {
+                alert("請先抉擇英雄的天命職業！");
+                return;
+            }
+            setupState.step = 6;
+            renderSetup();
+        }
+
+        // --- 4D6 判定與配置演算邏輯 ---
+        function executeAttributeRolls() {
+            setupState.rolledPool = [];
+            for (let i = 0; i < 6; i++) {
+                let rolls = [];
+                for (let j = 0; j < 4; j++) {
+                    rolls.push(Math.floor(Math.random() * 6) + 1);
+                }
+                rolls.sort((a, b) => b - a); // 降序排列
+                let sumTop3 = rolls[0] + rolls[1] + rolls[2]; // 取最高三個相加
+                setupState.rolledPool.push(sumTop3);
+            }
+            renderSetup();
+        }
+
+        function getDndModifier(score) {
+            if (score <= 1) return -5;
+            if (score <= 3) return -4;
+            if (score <= 5) return -3;
+            if (score <= 7) return -2;
+            if (score <= 9) return -1;
+            if (score <= 11) return 0;
+            if (score <= 13) return 1;
+            if (score <= 15) return 2;
+            if (score <= 17) return 3;
+            if (score <= 19) return 4;
+            if (score <= 21) return 5;
+            if (score <= 23) return 6;
+            if (score <= 25) return 7;
+            if (score <= 27) return 8;
+            if (score <= 29) return 9;
+            return 10;
+        }
+
+        function calcModifiers() {
+            ['str','dex','con','int','wis','cha'].forEach(key => {
+                let select = document.getElementById(`sel-${key}`);
+                let modSpan = document.getElementById(`mod-${key}`);
+                if(select && modSpan) {
+                    let score = parseInt(select.value);
+                    let mod = getDndModifier(score);
+                    modSpan.innerText = mod >= 0 ? `(+${mod})` : `(${mod})`;
+                }
             });
+        }
+
+        function finalizeHeroCreation() {
+            // 讀取玩家手動選定的六大基礎能力值
+            ['str','dex','con','int','wis','cha'].forEach(key => {
+                let select = document.getElementById(`sel-${key}`);
+                if(select) {
+                    setupState.tempHero.stats[key] = parseInt(select.value);
+                }
+            });
+
+            // 套用種族能力值加值修正
+            const raceData = DND_DATA.races[setupState.tempHero.race];
+            raceData.applyBonus(setupState.tempHero.stats);
+
+            // 計算初始生命值 (1級生命值：Max生命骰 + 體質調整值)
+            const classData = DND_DATA.classes[setupState.tempHero.class];
+            let maxHpValue = classData.hpDice === "1D12" ? 12 : (classData.hpDice === "1D10" ? 10 : (classData.hpDice === "1D8" ? 8 : 6));
+            let finalHp = maxHpValue + getDndModifier(setupState.tempHero.stats.con);
+            if(finalHp <= 0) finalHp = 1;
+
+            // 將裝備名稱拆分進背包
+            const initialGearList = classData.gear.split('、');
+
+            Game.players = [{
+                name: setupState.tempHero.name,
+                class: setupState.tempHero.class,
+                race: setupState.tempHero.race,
+                level: 1,
+                title: `${setupState.tempHero.race} ${setupState.tempHero.class}`,
+                hp: finalHp, maxHp: finalHp,
+                stats: { ...setupState.tempHero.stats },
+                skills: ["規則熟練"]
+            }];
+
+            Game.inventory.personal = initialGearList;
+
             startGame();
         }
 
-        // --- 與 API 串接的核心邏輯 ---
+        // --- 進入跑團主迴圈流程 ---
         function startGame() {
             showScreen('screen-game');
             updateQuickStats();
             
             const p = Game.players[0];
-            addLog('系統', `規則庫載入完畢。世界觀設定為《${Game.world}》。準備喚醒 AI 導師...`);
-            document.getElementById('summary-narrative').innerText = `${p.name} (${p.class}) 抵達了 ${Game.location}。`;
+            addLog('系統', `全端架構部署綠燈。核心引擎對接：【Gemini-2.5-Flash】。`);
+            document.getElementById('summary-narrative').innerText = `${p.name} (${p.title}) 抵達了 ${Game.location}。`;
 
-            // 組裝交給 Gemini 的初始設定 Prompt
-            const initPrompt = `請扮演龍與地下城(D&D 5E)的嚴謹GM。
-            【戰役設定】世界觀：${Game.world}。起始地點：${Game.location}。玩家背景/使命：${Game.mission}。
-            【玩家角色】姓名：${p.name}。職業：${p.class}。等級：1。
-            【任務要求】請根據以上設定，為這名玩家描述一個充滿沉浸感的開場場景，描繪周遭的環境與NPC。在結尾，請給出3個供玩家選擇的行動方向建議。`;
+            // 組裝發送給 Gemini-2.5-Flash 的精準提示詞 (Prompt)
+            const initPrompt = `請扮演龍與地下城(D&D 5E)的嚴謹GM，所有判定完全參照5etools資料庫。
+            【當前戰役設定】
+            宏觀世界觀與法則：${Game.world} (若設定為AI隨機創立世界觀，請由你全權隨機生成一個硬核、符合5E風味的奇幻黑暗世界)。
+            起點境地：${Game.location}。
+            英雄宿命背景：${Game.mission}。
+            【玩家英雄角色資訊】
+            名諱：${p.name}。種族：${p.race}。天命職業：${p.class}。等級：1。
+            當前數值狀態：力量 ${p.stats.str}、敏捷 ${p.stats.dex}、體質 ${p.stats.con}、智力 ${p.stats.int}、睿智 ${p.stats.wis}、魅力 ${p.stats.cha}。
+            【GM當前任務】
+            請根據以上背景與起始條件，撰寫一段極具沉浸感、文字考究的跑團劇本開場。請細緻描繪周遭的環境色調與突發事件，並在最後提供3個具體的行動選擇按鈕建議。`;
 
             callGameAPI(initPrompt, true);
         }
@@ -440,11 +661,10 @@
             if(input) input.value = '';
 
             const btnArea = document.getElementById('choice-buttons');
-            btnArea.innerHTML = '<span class="text-gray-500 italic text-sm py-2">命運的齒輪正在轉動...</span>';
+            btnArea.innerHTML = '<span class="text-gray-500 italic text-sm py-2">命運之輪正在契合運算...</span>';
             document.getElementById('submit-btn').classList.add('opacity-50', 'cursor-not-allowed');
 
-            // 標準對話發送
-            const systemPrompt = `你是一名D&D 5E的GM。玩家剛才的行動是：「${prompt}」。請判斷結果並描述場景，必要時請要求玩家擲骰。結尾請給出3個建議行動選項。`;
+            const systemPrompt = `你是一名嚴謹的D&D 5E GM。玩家剛才的決斷行動是：「${prompt}」。請精確結合玩家的能力值、種族特質及5E規則進行場景判定、描述後續，並在文末照常給出3個建議行動選項。`;
             callGameAPI(systemPrompt, false);
         }
 
@@ -466,23 +686,21 @@
                 
                 addLog('GM', gmReply);
                 
-                // 更新對話歷史給 API
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 chatHistory.push({ role: "model", parts: [{ text: data.reply }] });
 
-                // 產生預設按鈕 (可後續靠正則表達式從 Gemini 回覆中萃取，此處提供泛用選項)
-                setChoices(["繼續探索前進", "仔細檢查周遭 (察覺)", "查看自身物品"]);
+                setChoices(["採取進一步行動", "仔細環顧周遭環境", "審視自身當前狀態"]);
                 
             } catch (error) {
                 console.error("API 連線異常:", error);
-                addLog('系統', `<span class="text-red-500">無法連接至神諭之眼 (API 連線失敗：${error.message})</span>`);
-                setChoices(["重試連線", "查看狀態"]);
+                addLog('系統', `<span class="text-red-500">神諭之眼連線失敗：${error.message}，請檢視控制台。</span>`);
+                setChoices(["重試前次意志", "回到主選單"]);
             } finally {
                 document.getElementById('submit-btn').classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        // --- 渲染分頁與側邊欄 ---
+        // --- 介面分頁與數值渲染器 ---
         function renderStatus() {
             const container = document.getElementById('player-status-container');
             container.innerHTML = Game.players.map(p => `
@@ -490,7 +708,7 @@
                     <div class="flex justify-between items-end mb-4 border-b border-gray-800 pb-4">
                         <div>
                             <h3 class="text-3xl text-white font-bold">${p.name}</h3>
-                            <p class="text-amber-500 italic">${p.title}</p>
+                            <p class="text-amber-500 italic text-sm font-bold">${p.title}</p>
                         </div>
                         <div class="text-right">
                             <span class="text-sm text-gray-400">等級 ${p.level}</span>
@@ -507,7 +725,8 @@
                         ${Object.entries(p.stats).map(([k, v]) => `
                             <div class="bg-gray-800 p-2 rounded border border-gray-700 shadow-inner">
                                 <div class="text-[10px] uppercase text-gray-500 mb-1">${k}</div>
-                                <div class="font-bold text-lg">${v}</div>
+                                <div class="font-bold text-lg text-amber-400">${v}</div>
+                                <div class="text-[10px] text-gray-400">${getDndModifier(v) >= 0 ? '+' : ''}${getDndModifier(v)}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -524,7 +743,7 @@
                         <div class="font-bold text-white text-lg">${p.name} <span class="text-xs font-normal text-gray-500">Lv.1</span></div>
                         <div class="text-xs text-amber-600 mb-2">${p.title}</div>
                         <div class="flex justify-between text-[10px] text-gray-400"><span>HP</span> <span>${p.hp}/${p.maxHp}</span></div>
-                        <div class="w-full bg-gray-900 h-1 mt-1 rounded-full"><div class="bg-blue-500 h-full rounded-full" style="width: ${(p.hp/p.maxHp)*100}%"></div></div>
+                        <div class="w-full bg-gray-900 h-1 mt-1 rounded-full"><div class="bg-blue-500 h-full rounded-full" style="width: 100%"></div></div>
                     </div>
                 </div>
             `).join('');
@@ -536,16 +755,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="runic-border p-6 rounded bg-black/40 text-gray-300">
                         <div class="flex justify-between border-b border-gray-700 pb-2 mb-4">
-                            <h3 class="text-white font-bold"><i class="fa-solid fa-sack-xmark mr-2"></i>個人武裝</h3>
-                            <span class="text-yellow-500 font-bold bg-gray-900 px-2 rounded"><i class="fa-solid fa-coins text-xs mr-1"></i>${Game.inventory.gold}</span>
+                            <h3 class="text-white font-bold"><i class="fa-solid fa-sack-xmark mr-2"></i>個人武裝與物資</h3>
+                            <span class="text-yellow-500 font-bold bg-gray-900 px-2 rounded"><i class="fa-solid fa-coins text-xs mr-1"></i>${Game.inventory.gold} GP</span>
                         </div>
-                        <ul class="text-sm space-y-3">
+                        <ul class="text-sm space-y-2">
                             ${Game.inventory.personal.map(i => `<li class="flex justify-between bg-gray-800/50 p-2 rounded"><span>${i}</span><span class="text-gray-500">x1</span></li>`).join('')}
                         </ul>
                     </div>
                     <div class="runic-border p-6 rounded bg-black/40 text-gray-300">
-                        <h3 class="text-white font-bold border-b border-gray-700 pb-2 mb-4"><i class="fa-solid fa-box-archive mr-2"></i>隊伍共同物資</h3>
-                        <ul class="text-sm space-y-3">
+                        <h3 class="text-white font-bold border-b border-gray-700 pb-2 mb-4"><i class="fa-solid fa-box-archive mr-2"></i>隊伍共同儲備</h3>
+                        <ul class="text-sm space-y-2">
                             ${Game.inventory.party.map(i => `<li class="flex justify-between bg-gray-800/50 p-2 rounded"><span>${i}</span><span class="text-gray-500">x1</span></li>`).join('')}
                         </ul>
                     </div>
@@ -558,21 +777,33 @@
             const p = Game.players[0];
             const q = document.getElementById('quick-stats');
             q.innerHTML = `
-                <div class="flex justify-between text-xs mb-1 text-gray-400"><span>HP</span> <span>${p.hp} / ${p.maxHp}</span></div>
-                <div class="w-full bg-gray-900 h-1.5 mb-4 rounded-full"><div class="bg-red-600 h-full rounded-full" style="width: ${(p.hp/p.maxHp)*100}%"></div></div>
-                <div class="flex justify-between border-b border-gray-800 pb-2 mb-2"><span>護甲 (AC)</span> <span class="text-white font-bold">14</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-2"><span>速度 (Speed)</span> <span class="text-white font-bold">30 ft</span></div>
+                <div class="flex justify-between text-xs mb-1 text-gray-400"><span>名諱：${p.name}</span> <span>HP: ${p.hp} / ${p.maxHp}</span></div>
+                <div class="w-full bg-gray-900 h-1.5 mb-4 rounded-full"><div class="bg-red-600 h-full rounded-full" style="width: 100%"></div></div>
+                <div class="flex justify-between border-b border-gray-800 pb-2 mb-2"><span>天命稱號</span> <span class="text-amber-500 text-xs font-bold">${p.title}</span></div>
+                <div class="flex justify-between border-b border-gray-800 pb-2 mb-2"><span>先攻調整 (DEX)</span> <span class="text-white font-bold">${getDndModifier(p.stats.dex) >= 0 ? '+' : ''}${getDndModifier(p.stats.dex)}</span></div>
+                <div class="flex justify-between border-b border-gray-800 pb-2"><span>基本步速</span> <span class="text-white font-bold">${p.race === '矮人' || p.race === '半身人' ? '25 ft' : '30 ft'}</span></div>
             `;
         }
 
-        // --- 命運之骰 ---
+        function setChoices(choices) {
+            const btnArea = document.getElementById('choice-buttons');
+            btnArea.innerHTML = '';
+            choices.forEach(c => {
+                const b = document.createElement('button');
+                b.className = 'btn-fantasy py-2 px-4 rounded text-xs text-left truncate text-gray-300';
+                b.innerText = c;
+                b.onclick = () => { if(c === "回到主選單") { showScreen('screen-main'); } else { handleAction(c); } };
+                btnArea.appendChild(b);
+            });
+        }
+
+        // --- 命運之骰機制 ---
         function roll(sides) {
             const box = document.getElementById('dice-visual-box');
             const display = document.getElementById('dice-display');
             
-            // 觸發動畫
             box.classList.remove('dice-rolling');
-            void box.offsetWidth; // 觸發重繪以重置動畫
+            void box.offsetWidth; 
             box.classList.add('dice-rolling');
             box.innerText = "?";
             
@@ -583,17 +814,16 @@
                 
                 let resultText = `系統代替玩家擲骰 <strong>D${sides}</strong>，結果為：<strong class="text-lg text-white">${res}</strong>`;
                 
-                // 暴擊與大失敗特效
                 if(sides === 20 && res === 20) {
                     box.style.color = "var(--accent-amber)";
                     box.style.borderColor = "var(--accent-amber)";
                     box.style.textShadow = "0 0 10px rgba(212,175,55,0.8)";
-                    resultText += ` <span class="text-amber-500 ml-2">★ 大成功 (Critical Success)! ★</span> ` ;
+                    resultText += ` <span class="text-amber-500 ml-2">★ 大成功 (Critical Success)! ★</span>`;
                 } else if(sides === 20 && res === 1) {
                     box.style.color = "#ef4444";
                     box.style.borderColor = "#ef4444";
                     box.style.textShadow = "0 0 10px rgba(239,68,68,0.8)";
-                    resultText += ` <span class="text-red-500 ml-2">☠ 大失敗 (Critical Miss)! ☠</span> ` ;
+                    resultText += ` <span class="text-red-500 ml-2">☠ 大失敗 (Critical Miss)! ☠</span>`;
                 } else {
                     box.style.color = "white";
                     box.style.borderColor = "var(--border-runic)";
@@ -602,7 +832,6 @@
                 
                 addLog('系統', resultText);
                 
-                // 將擲骰結果預填至輸入框，方便玩家直接發送給 GM
                 const input = document.getElementById('free-input');
                 input.value = `(擲骰 D${sides} 結果為 ${res}) `;
                 input.focus();
@@ -610,6 +839,7 @@
             }, 600);
         }
 
+        window.onload = () => showScreen('screen-main');
     </script>
 </body>
 </html>
