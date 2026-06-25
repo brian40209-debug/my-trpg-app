@@ -39,32 +39,46 @@
     <script>
         const state = { playerA: { stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 } } };
 
+        // 串接您的 api/generate.js (Gemini API)
         async function callGameAPI(userAction) {
-            const API_URL = "/api/game"; 
-            const API_KEY = "YOUR_REAL_API_KEY"; // 請務必在此輸入您的金鑰或使用環境變數
+            const API_URL = "/api/generate"; 
+            
+            // 組合給 Gemini 的提示詞，加入 GM 人設與玩家當前動作
+            const systemPrompt = `你現在是龍與地下城(D&D 5E)的嚴謹GM。玩家動作：「${userAction}」。請描述場景與結果。`;
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${API_KEY}` 
-                    },
-                    body: JSON.stringify({ playerAction: userAction, gameState: state })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: systemPrompt,
+                        history: [] // 若需記憶劇情，後續可在此帶入歷史紀錄陣列
+                    })
                 });
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`伺服器回應錯誤: ${response.status}`);
+                }
+                
                 const data = await response.json();
-                addLog('GM', data.narrative);
-                if (data.suggestions) setSuggestedActions(data.suggestions);
+                
+                // 您的 generate.js 是回傳 { reply: text }
+                addLog('GM', data.reply.replace(/\n/g, '<br>'));
+                
+                // 暫時給予泛用選項，以配合 Gemini 純文字回傳
+                setSuggestedActions(["繼續探索", "檢查四周", "查看自身狀態"]);
+                
             } catch (error) {
-                console.error(error);
-                addLog('系統', 'API 連線失敗：' + error.message);
+                console.error("Fetch 錯誤細節:", error);
+                addLog('系統', '<span class="text-red-500">API 連線失敗：' + error.message + '</span>');
+                document.getElementById('suggested-actions').innerHTML = '';
             }
         }
 
         function addLog(sender, text) {
             const log = document.getElementById('story-log');
-            log.innerHTML += `<div><strong>${sender}:</strong> ${text}</div>`;
+            log.innerHTML += `<div class="mb-3"><strong>${sender}:</strong> ${text}</div>`;
+            log.scrollTop = log.scrollHeight;
         }
 
         function setSuggestedActions(actions) {
@@ -83,6 +97,7 @@
             const input = document.getElementById('player-input');
             if(!input.value) return;
             addLog('Player', input.value);
+            document.getElementById('suggested-actions').innerHTML = '<span class="text-gray-500 italic">Gemini 正在計算命運...</span>';
             callGameAPI(input.value);
             input.value = '';
         }
@@ -94,7 +109,7 @@
 
         function completeSetup() {
             showScreen('screen-game');
-            addLog('系統', '冒險開始...');
+            addLog('系統', '冒險開始... 請輸入您的第一個動作。');
         }
 
         window.onload = () => showScreen('screen-main');
