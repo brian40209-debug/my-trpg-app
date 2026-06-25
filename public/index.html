@@ -305,9 +305,9 @@
             classes: {
                 "牧師": {
                     desc: "神聖魔法的導引者，集治癒振奮魔法與天罰神力於一身。憑藉 ایمان 與信仰對神意進行感應。",
-                    suggest: "最高分配給睿智 (WIS)，次高分配給力量 (STR) 或體質 (CON)。",
+                    suggest: "最高分配給感知 (WIS)，次高分配給力量 (STR) 或體質 (CON)。",
                     hpDice: "1D8",
-                    save: "睿智、魅力",
+                    save: "感知、魅力",
                     gear: "硬頭錘、鱗甲、輕弩與20支箭、探索者套裝、盾牌、聖徽"
                 },
                 "野蠻人": {
@@ -319,7 +319,7 @@
                 },
                 "遊俠": {
                     desc: "荒野的致命獵手，專精於追蹤特定宿敵與荒野求生。能驅使與自然調和的魔法，注重速度與隱匿。",
-                    suggest: "最高分配給敏捷 (DEX)，次高分配給睿智 (WIS)。",
+                    suggest: "最高分配給敏捷 (DEX)，次高分配給感知 (WIS)。",
                     hpDice: "1D10",
                     save: "力量、敏捷",
                     gear: "鱗甲、兩柄短劍、地城探險家套裝、長弓與20支箭"
@@ -328,7 +328,7 @@
                     desc: "透過經年累月的研究、魔典記錄與精密計算來掌控祕法的施法者。魔法儲備源於自身的至高智力。",
                     suggest: "最高分配給智力 (INT)，次高分配給體質 (CON) 或敏捷 (DEX)。",
                     hpDice: "1D6",
-                    save: "智力、睿智",
+                    save: "智力、感知",
                     gear: "長棍、材料包、學者套裝、法術書"
                 }
             }
@@ -448,6 +448,20 @@
             }
             else if (setupState.step === 5) {
                 document.getElementById('setup-header').innerText = "Phase IV-2: 英雄的天命與職業";
+                
+                // 動態演算當前選定職業之特性面板
+                let classDetailsHTML = `<span class="text-gray-500 italic">請抉擇職業以顯現天命特性...</span>`;
+                if (setupState.tempHero.class) {
+                    const cls = setupState.tempHero.class;
+                    const data = DND_DATA.classes[cls];
+                    classDetailsHTML = `
+                        <div class="text-amber-500 font-bold">【職業天命】${cls} (生命骰：${data.hpDice})</div>
+                        <div class="text-gray-400 text-xs italic mb-1">配點建議：${data.suggest}</div>
+                        <div class="text-xs text-gray-300"><strong class="text-amber-600/80">豁免熟練：</strong>${data.save}</div>
+                        <div class="text-xs text-gray-300"><strong class="text-amber-600/80">起始裝備：</strong>${data.gear}</div>
+                    `;
+                }
+
                 body.innerHTML = `
                     <div class="space-y-6 text-white">
                         <div>
@@ -462,13 +476,13 @@
                             </div>
                         </div>
                         <div id="class-details-box" class="runic-border p-4 rounded bg-black/40 text-sm space-y-2">
-                            <span class="text-gray-500 italic">請抉擇職業以顯現天命特性...</span>
+                            ${classDetailsHTML}
                         </div>
                     </div>
                 `;
+                
                 nextContainer.innerHTML = `<button onclick="savePhase4Class()" class="btn-fantasy px-10 py-2 rounded font-bold text-amber-500">領受天命</button>`;
                 footer.appendChild(nextContainer);
-                if(setupState.tempHero.class) updateClassUI(setupState.tempHero.class);
             }
             else if (setupState.step === 6) {
                 document.getElementById('setup-header').innerText = "Phase IV-3: 命運屬性的隨機判定";
@@ -490,14 +504,22 @@
                             <h4 class="text-sm font-bold text-amber-500 mb-3">六項能力值配置與調整值對照</h4>
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 ${['str','dex','con','int','wis','cha'].map(key => {
-                                    let label = {str:'力量 (STR)', dex:'敏捷 (DEX)', con:'體質 (CON)', int:'智力 (INT)', wis:'睿智 (WIS)', cha:'魅力 (CHA)'}[key];
+                                    let label = {str:'力量 (STR)', dex:'敏捷 (DEX)', con:'體質 (CON)', int:'智力 (INT)', wis:'感知 (WIS)', cha:'魅力 (CHA)'}[key];
+                                    // 依 5E 規範定義不擲骰時的標準陣列基本數值
+                                    let baseVal = {str:15, dex:14, con:13, int:12, wis:10, cha:8}[key];
                                     return `
                                         <div class="flex items-center justify-between bg-gray-900/60 p-2 rounded border border-gray-800">
                                             <span class="font-bold">${label}</span>
                                             <div class="flex items-center gap-2">
                                                 <select id="sel-${key}" onchange="calcModifiers()" class="bg-black text-amber-400 border border-gray-700 rounded p-1 text-xs outline-none focus:border-amber-500">
-                                                    <option value="10">10 (基本)</option>
+                                                    <option value="${baseVal}">${baseVal} (基本)</option>
                                                     ${setupState.rolledPool.map(num => `<option value="${num}">${num}</option>`).join('')}
+                                                </select>
+                                                <span id="mod-${key}" class="text-xs text-gray-400 font-bold w-10 text-center">(+0)</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
                                                 </select>
                                                 <span id="mod-${key}" class="text-xs text-gray-400 font-bold w-10 text-center">(+0)</span>
                                             </div>
@@ -550,7 +572,10 @@
             renderSetup();
         }
 
-        function selectClass(c) { setupState.tempHero.class = c; updateClassUI(c); renderSetup(); }
+        function selectClass(c) { 
+            setupState.tempHero.class = c; 
+            renderSetup(); 
+        }
         function updateClassUI(c) {
             const box = document.getElementById('class-details-box');
             if(!box) return;
@@ -672,7 +697,7 @@
             英雄宿命背景：${Game.mission}。
             【玩家英雄角色資訊】
             名諱：${p.name}。種族：${p.race}。天命職業：${p.class}。等級：1。
-            當前數值狀態：力量 ${p.stats.str}、敏捷 ${p.stats.dex}、體質 ${p.stats.con}、智力 ${p.stats.int}、睿智 ${p.stats.wis}、魅力 ${p.stats.cha}。
+            當前數值狀態：力量 ${p.stats.str}、敏捷 ${p.stats.dex}、體質 ${p.stats.con}、智力 ${p.stats.int}、感知 ${p.stats.wis}、魅力 ${p.stats.cha}。
             【GM當前任務】
             請根據以上背景與起始條件，撰寫一段極具沉浸感、文字考究的跑團劇本開場。請細緻描繪周遭的環境色調與突發事件，並在最後提供3個具體的行動選擇按鈕建議。`;
 
