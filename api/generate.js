@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const genAI = new GoogleGenerativeAI(apiKey);
         
         // 【關鍵修正】改用 gemini-1.5-flash-latest，這通常能解決 404 問題
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         const { prompt, history } = req.body;
         const chat = model.startChat({ history: history || [] });
