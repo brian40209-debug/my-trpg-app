@@ -10,8 +10,6 @@
         body { font-family: 'Noto Serif TC', serif; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; }
         .screen { display: none; opacity: 0; transition: opacity 0.5s ease; }
         .screen.active { display: flex; opacity: 1; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
         .btn-fantasy { background: linear-gradient(to bottom, #374151, #1f2937); border: 1px solid #4b5563; color: var(--text-main); }
     </style>
 </head>
@@ -33,7 +31,7 @@
         <main class="flex-grow p-6">
             <div id="story-log" class="h-3/4 overflow-y-auto bg-gray-800 p-4 rounded mb-4"></div>
             <input type="text" id="player-input" class="w-full bg-gray-800 p-3 text-white border border-gray-600 rounded" placeholder="輸入動作...">
-            <button onclick="submitAction()" class="mt-2 btn-fantasy py-2 px-4 rounded">送出行動</button>
+            <button onclick="submitAction()" class="mt-2 btn-fantasy py-2 px-6 rounded">送出行動</button>
             <div id="suggested-actions" class="mt-2 flex gap-2"></div>
         </main>
     </div>
@@ -41,21 +39,26 @@
     <script>
         const state = { playerA: { stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 } } };
 
-        // API 串接邏輯
         async function callGameAPI(userAction) {
             const API_URL = "/api/game"; 
+            const API_KEY = "YOUR_REAL_API_KEY"; // 請務必在此輸入您的金鑰或使用環境變數
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${API_KEY}` 
+                    },
                     body: JSON.stringify({ playerAction: userAction, gameState: state })
                 });
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
                 const data = await response.json();
                 addLog('GM', data.narrative);
-                setSuggestedActions(data.suggestions);
+                if (data.suggestions) setSuggestedActions(data.suggestions);
             } catch (error) {
-                addLog('系統', 'API 連線失敗');
+                console.error(error);
+                addLog('系統', 'API 連線失敗：' + error.message);
             }
         }
 
@@ -64,10 +67,24 @@
             log.innerHTML += `<div><strong>${sender}:</strong> ${text}</div>`;
         }
 
+        function setSuggestedActions(actions) {
+            const container = document.getElementById('suggested-actions');
+            container.innerHTML = '';
+            actions.forEach(act => {
+                const btn = document.createElement('button');
+                btn.className = "btn-fantasy p-2 rounded text-sm";
+                btn.innerText = act;
+                btn.onclick = () => { document.getElementById('player-input').value = act; submitAction(); };
+                container.appendChild(btn);
+            });
+        }
+
         function submitAction() {
-            const text = document.getElementById('player-input').value;
-            addLog('Player', text);
-            callGameAPI(text);
+            const input = document.getElementById('player-input');
+            if(!input.value) return;
+            addLog('Player', input.value);
+            callGameAPI(input.value);
+            input.value = '';
         }
 
         function showScreen(id) {
