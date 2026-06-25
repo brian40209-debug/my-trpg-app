@@ -215,7 +215,8 @@
     </div>
 
     <script>
-        let chatHistory = []; 
+        let chatHistory = [];
+        let isGenerating = false; // 新增這行：用來控制神諭之眼的加載鎖定
 
         const Game = {
             players: [],
@@ -587,6 +588,25 @@
         }
 
         function finalizeHeroCreation() {
+            // --- 新增：數值重複防呆驗證 ---
+            let selectedVals = [];
+            ['str','dex','con','int','wis','cha'].forEach(key => {
+                let select = document.getElementById(`sel-${key}`);
+                if(select) selectedVals.push(parseInt(select.value));
+            });
+
+            let sortedSelected = selectedVals.sort((a, b) => a - b);
+            let sortedPool = setupState.rolledPool.length > 0 
+                ? [...setupState.rolledPool].sort((a, b) => a - b) 
+                : [8, 10, 12, 13, 14, 15]; // 5E 標準基本陣列
+
+            if (JSON.stringify(sortedSelected) !== JSON.stringify(sortedPool)) {
+                alert("【神諭警告】能力值分配有誤！\n\n每項擲骰結果（或基本數值）只能使用一次，不可重複填入。請檢查您的屬性配置。");
+                return;
+            }
+            // --- 結束防呆驗證 ---
+
+            // 正式寫入角色資料
             ['str','dex','con','int','wis','cha'].forEach(key => {
                 let select = document.getElementById(`sel-${key}`);
                 if(select) {
@@ -672,12 +692,21 @@
         }
 
         async function handleAction(actionText) {
+            // 阻止重複加載與點擊
+            if (isGenerating) {
+                alert("請等待神諭之眼的引導");
+                return;
+            }
+
             const input = document.getElementById('free-input');
             const prompt = actionText || input.value;
             if(!prompt) return;
             
             addLog('玩家', prompt);
-            if(input) input.value = '';
+            if(input) {
+                input.value = '';
+                input.disabled = true; // 鎖定輸入框
+            }
 
             const btnArea = document.getElementById('choice-buttons');
             btnArea.innerHTML = '<span class="text-gray-500 italic text-sm py-2">命運之輪正在契合運算...</span>';
@@ -688,6 +717,10 @@
         }
 
         async function callGameAPI(prompt, isInit = false) {
+            // 開啟鎖定狀態，並顯示神諭之眼提示
+            isGenerating = true;
+            addLog('系統', '<span id="loading-indicator" class="text-amber-500 animate-pulse"><i class="fa-solid fa-eye"></i> 神諭之眼正在指引...</span>');
+
             try {
                 const response = await fetch('/api/generate', {
                     method: 'POST',
@@ -698,7 +731,15 @@
                 if (!response.ok) throw new Error(`HTTP 錯誤: ${response.status}`);
 
                 const data = await response.json();
-                const gmReply = data.reply.replace(/\n/g, '<br>');
+                
+                // 收到回覆後，移除神諭加載提示
+                const indicator = document.getElementById('loading-indicator');
+                if(indicator) indicator.parentElement.remove();
+
+                // 使用正則表達式，將 **文字** 替換為 HTML 粗體
+                const gmReply = data.reply
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-500">$1</strong>')
+                    .replace(/\n/g, '<br>');
                 
                 addLog('GM', gmReply);
                 
@@ -709,10 +750,19 @@
                 
             } catch (error) {
                 console.error("API 連線異常:", error);
+                const indicator = document.getElementById('loading-indicator');
+                if(indicator) indicator.parentElement.remove();
                 addLog('系統', `<span class="text-red-500">神諭之眼連線失敗：${error.message}，請檢視控制台。</span>`);
                 setChoices(["重試前次意志", "回到主選單"]);
             } finally {
+                // 解除所有鎖定，允許玩家再次行動
+                isGenerating = false; 
                 document.getElementById('submit-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+                const input = document.getElementById('free-input');
+                if(input) {
+                    input.disabled = false;
+                    input.focus();
+                }
             }
         }
 
