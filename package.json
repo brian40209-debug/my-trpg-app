@@ -1,0 +1,11 @@
+{
+  "name": "dungeons-and-abyss",
+  "version": "1.0.0",
+  "description": "TRPG GM Assistant",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
