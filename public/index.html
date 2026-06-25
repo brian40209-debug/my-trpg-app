@@ -1,62 +1,87 @@
-// 在 <script> 標籤內，將原本的 fakeGMNarrative 替換為以下邏輯
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>深淵與龍：GM 輔助系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #111827; --panel-bg: #1f2937; --text-main: #d1d5db; --text-highlight: #fcd34d; }
+        body { font-family: 'Noto Serif TC', serif; background-color: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+        .screen { display: none; opacity: 0; transition: opacity 0.5s ease; }
+        .screen.active { display: flex; opacity: 1; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .btn-fantasy { background: linear-gradient(to bottom, #374151, #1f2937); border: 1px solid #4b5563; color: var(--text-main); }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-center">
 
-/**
- * 串接您的 API 處理遊戲邏輯
- * @param {string} userAction 玩家的輸入動作
- */
-async function callGameAPI(userAction) {
-    const API_URL = "YOUR_API_ENDPOINT"; // 請填入您的 API 位址
-    const API_KEY = "YOUR_API_KEY";     // 請填入您的 API 金鑰
+    <div id="screen-main" class="screen active flex-col items-center justify-center w-full h-full">
+        <h1 class="text-6xl font-black mb-4 text-amber-500">DRAGONS & DUNGEONS</h1>
+        <button onclick="showScreen('screen-setup')" class="btn-fantasy py-3 px-6 rounded text-lg font-bold">開始冒險</button>
+    </div>
 
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${API_KEY}`
-            },
-            body: JSON.stringify({
-                playerAction: userAction,
-                gameState: state, // 傳送當前遊戲進度供 API 判斷
-                timestamp: new Date().toISOString()
-            })
-        });
+    <div id="screen-setup" class="screen flex-col w-full h-full p-6">
+        <div class="bg-gray-800 p-8 rounded shadow-xl">
+            <h2 class="text-2xl text-amber-500 mb-4">系統初始化完成</h2>
+            <button onclick="completeSetup()" class="btn-fantasy py-2 px-6 rounded">進入遊戲</button>
+        </div>
+    </div>
 
-        if (!response.ok) throw new Error('API 連線異常');
+    <div id="screen-game" class="screen w-full h-full flex flex-col md:flex-row bg-gray-900">
+        <main class="flex-grow p-6">
+            <div id="story-log" class="h-3/4 overflow-y-auto bg-gray-800 p-4 rounded mb-4"></div>
+            <input type="text" id="player-input" class="w-full bg-gray-800 p-3 text-white border border-gray-600 rounded" placeholder="輸入動作...">
+            <button onclick="submitAction()" class="mt-2 btn-fantasy py-2 px-4 rounded">送出行動</button>
+            <div id="suggested-actions" class="mt-2 flex gap-2"></div>
+        </main>
+    </div>
 
-        const data = await response.json();
-        
-        // 解析 API 回傳資料並更新 UI
-        // 假設 API 回傳格式為 { narrative: "", suggestions: [], statusUpdate: {} }
-        addLog('GM', data.narrative);
-        setSuggestedActions(data.suggestions);
-        
-        if (data.statusUpdate) {
-            updateStatsFromAPI(data.statusUpdate);
+    <script>
+        const state = { playerA: { stats: { str:10, dex:10, con:10, int:10, wis:10, cha:10 } } };
+
+        // API 串接邏輯
+        async function callGameAPI(userAction) {
+            const API_URL = "YOUR_API_ENDPOINT"; 
+            const API_KEY = "YOUR_API_KEY";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+                    body: JSON.stringify({ playerAction: userAction, gameState: state })
+                });
+                const data = await response.json();
+                addLog('GM', data.narrative);
+                setSuggestedActions(data.suggestions);
+            } catch (error) {
+                addLog('系統', 'API 連線失敗');
+            }
         }
 
-    } catch (error) {
-        addLog('系統', `<span class="text-red-500">API 連線失敗：${error.message}，請檢查後端服務。</span>`);
-        console.error(error);
-    }
-}
+        function addLog(sender, text) {
+            const log = document.getElementById('story-log');
+            log.innerHTML += `<div><strong>${sender}:</strong> ${text}</div>`;
+        }
 
-// 覆寫原本的 submitAction 以呼叫 API
-function submitAction(actionText = null) {
-    const inputEl = document.getElementById('player-input');
-    const text = actionText || inputEl.value.trim();
-    if(!text) return;
+        function submitAction() {
+            const text = document.getElementById('player-input').value;
+            addLog('Player', text);
+            callGameAPI(text);
+        }
 
-    addLog('Player', text);
-    inputEl.value = '';
-    document.getElementById('suggested-actions').innerHTML = '<span class="text-gray-500 italic text-sm">GM 正在計算命運...</span>';
-    
-    // 呼叫您的 API
-    callGameAPI(text);
-}
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-// 輔助函式：更新角色狀態
-function updateStatsFromAPI(status) {
-    state.playerA.stats = { ...state.playerA.stats, ...status.stats };
-    updateUIStats();
-}
+        function completeSetup() {
+            showScreen('screen-game');
+            addLog('系統', '冒險開始...');
+        }
+
+        window.onload = () => showScreen('screen-main');
+    </script>
+</body>
+</html>
