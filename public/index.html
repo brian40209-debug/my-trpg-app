@@ -558,8 +558,8 @@
             box.innerHTML = `
                 <div class="text-amber-500 font-bold">【職業天命】${c} (生命骰：${data.hpDice})</div>
                 <div class="text-gray-400 text-xs italic mb-1">配點建議：${data.suggest}</div>
-                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">豁免熟練：</strong>${data.save.join('、')}</div>
-                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">起始初始裝備：</strong>${data.gear}</div>
+                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">豁免熟練：</strong>${data.save}</div>
+                <div class="text-xs text-gray-300"><strong class="text-amber-600/80">起始裝備：</strong>${data.gear}</div>
             `;
         }
         function savePhase4Class() {
